@@ -7,6 +7,7 @@ using System.Xml;
 using System.Web.Script.Serialization;
 using System.IO;
 using Newtonsoft.Json;
+using System.Collections.ObjectModel;
 
 namespace MandCoTechnical
 {
@@ -90,8 +91,22 @@ namespace MandCoTechnical
                     // get the previous hours file
                     string strHour = currentHour.ToString("D2");
                     string currentFilename = getFilenameForHour(filename, strHour);
+                    
+                    // if a file exists for current hour
+                    if (File.Exists("feed/" + currentFilename))
+                    {
+                        // Store the items in the file in currentRssItems
+                        Console.WriteLine("Previous file name :" + currentFilename);
+                        string newJsonSTRING = File.ReadAllText("feed/" + currentFilename);
+                        Collection<RssItem> currentRssItems = JsonConvert.DeserializeObject<Collection<RssItem>>(newJsonSTRING);
 
-                    currentHour--;
+                        // Remove headlines already stored from new rss items
+                        removeDuplicateHeadlines(currentRssItems);
+
+                        currentHour--;
+                    }else {
+                        Console.WriteLine("Warning file does not exist for: " + currentFilename.Substring(0, 13));
+                    }
                 }
 
 
