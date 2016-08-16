@@ -11,8 +11,14 @@ using System.Collections.ObjectModel;
 
 namespace MandCoTechnical
 {
+
+
+
     class Program
     {
+
+        public static Collection<RssItem> newItems = new Collection<RssItem>();
+
         /// <summary>
         /// Returns the intended filename given the current date/time
         /// </summary>
@@ -62,16 +68,17 @@ namespace MandCoTechnical
 
         }
 
-        private static void removeDuplicateHeadlines(Collection<RssItem> previousRssItems)
+        private static Collection<RssItem> removeDuplicateHeadlines(Collection<RssItem> previousRssItems)
         {
 
             RssFeed rssFeed = new RssFeed();
+
 
             Collection<RssItem> items_to_remove = new Collection<RssItem>();
             foreach (RssItem item in previousRssItems)
             {
                 // if item.title is already a title in rssItems remove from new RssItems
-                foreach (RssItem new_item in rssFeed.RssItems)
+                foreach (RssItem new_item in rssFeed.rssItems)
                 {
                     if (new_item.title.Equals(item.title))
                     {
@@ -82,10 +89,11 @@ namespace MandCoTechnical
             }
             foreach (RssItem item in items_to_remove)
             {
-                //Console.WriteLine("Removing item: " + item.title);
-                rssFeed.RssItems.Remove(item);
-            }
+                Console.WriteLine("Removing item: " + item.title);
+                rssFeed.rssItems.Remove(item);
+            }         
 
+            return newItems = rssFeed.rssItems;
 
         }
 
@@ -101,10 +109,12 @@ namespace MandCoTechnical
             RssFeed rssFeed = new RssFeed();
             rssFeed.ParseRssItems(rssDoc);
 
+
             // calculate the current filename
             String filename = getCurrentfilename();
 
-            JavaScriptSerializer ser = new JavaScriptSerializer();
+            JavaScriptSerializer ser = new JavaScriptSerializer();          
+            
 
             // if Hour != 00
             if (filename.Substring(11, 2) != "00")
@@ -127,18 +137,21 @@ namespace MandCoTechnical
                         Collection<RssItem> currentRssItems = JsonConvert.DeserializeObject<Collection<RssItem>>(newJsonSTRING);
 
                         // Remove headlines already stored from new rss items
-                        removeDuplicateHeadlines(currentRssItems);
-
-                        
-                    }else {
+                        newItems = removeDuplicateHeadlines(currentRssItems);
+                       
+                    }
+                    else {
                         Console.WriteLine("Warning file does not exist for: " + currentFilename.Substring(0, 13));
+
                     }
                     // Move onto the previous file
                     currentHour--;
                 }
+
                 
+
                 // write all items still in RssItems to file
-                string newHeadlines = JsonConvert.SerializeObject(rssFeed.RssItems);
+                string newHeadlines = JsonConvert.SerializeObject(newItems);
                 File.WriteAllText("feed/" + filename, newHeadlines);
 
 
@@ -146,7 +159,7 @@ namespace MandCoTechnical
             else {
                 // New day so write all headlines to file
                 Console.WriteLine("Hour is 00 ...... Resetting Headlines!");
-                string AllHeadlines = JsonConvert.SerializeObject(rssFeed.RssItems);
+                string AllHeadlines = JsonConvert.SerializeObject(rssFeed.rssItems);
                 File.WriteAllText("feed/" + filename, AllHeadlines);
 
 
