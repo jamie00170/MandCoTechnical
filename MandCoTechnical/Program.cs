@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace MandCoTechnical
 {
@@ -10,6 +11,13 @@ namespace MandCoTechnical
     {
         static void Main(string[] args)
         {
+            // Create a new XML Reader
+            XmlTextReader rssReader = new XmlTextReader("http://feeds.bbci.co.uk/news/uk/rss.xml");
+
+            XmlDocument rssDoc = new XmlDocument();
+            rssDoc.Load(rssReader);
+
+
         }
     }
 }
