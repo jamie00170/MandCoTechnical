@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Web.Script.Serialization;
 
 namespace MandCoTechnical
 {
@@ -29,6 +30,20 @@ namespace MandCoTechnical
             return filename;
         }
 
+        /// <summary>
+        /// Returns an int version of the current hour
+        /// </summary>
+        /// <returns></returns>
+        private static int getCurrentHourInt()
+        {
+            string dateNow = DateTime.Now.ToString("HH");
+            int currentHour = 0;
+            Int32.TryParse(dateNow, out currentHour);
+
+            return currentHour;
+
+        }
+
 
 
         static void Main(string[] args)
@@ -42,9 +57,31 @@ namespace MandCoTechnical
             RssFeed rssFeed = new RssFeed();
             rssFeed.ParseRssItems(rssDoc);
 
-            String filename = getCurrentfilename();      
+            // calculate the current filename
+            String filename = getCurrentfilename();
+
+            JavaScriptSerializer ser = new JavaScriptSerializer();
+
+            // if Hour != 00
+            if (filename.Substring(11, 2) != "00")
+            {
+                // Check all files that already exist for that day
+                int currentHour = getCurrentHourInt();
+                currentHour--; // don't look at file for current hour 
+                while (currentHour >= 0)
+                {
+
+                    currentHour--;
+                }
 
 
+            } else {
+                // New day so Read in all headlines
+
+
+            }
+
+
+            }
         }
-    }
 }
