@@ -62,6 +62,32 @@ namespace MandCoTechnical
 
         }
 
+        private static void removeDuplicateHeadlines(Collection<RssItem> previousRssItems)
+        {
+
+            RssFeed rssFeed = new RssFeed();
+
+            Collection<RssItem> items_to_remove = new Collection<RssItem>();
+            foreach (RssItem item in previousRssItems)
+            {
+                // if item.title is already a title in rssItems remove from new RssItems
+                foreach (RssItem new_item in rssFeed.RssItems)
+                {
+                    if (new_item.title.Equals(item.title))
+                    {
+                        //Console.WriteLine("Two titles equal: " + new_item.title + " and " + item.title);       
+                        items_to_remove.Add(new_item);
+                    }
+                }
+            }
+            foreach (RssItem item in items_to_remove)
+            {
+                //Console.WriteLine("Removing item: " + item.title);
+                rssFeed.RssItems.Remove(item);
+            }
+
+
+        }
 
 
         static void Main(string[] args)
@@ -103,14 +129,21 @@ namespace MandCoTechnical
                         // Remove headlines already stored from new rss items
                         removeDuplicateHeadlines(currentRssItems);
 
-                        currentHour--;
+                        
                     }else {
                         Console.WriteLine("Warning file does not exist for: " + currentFilename.Substring(0, 13));
                     }
+                    // Move onto the previous file
+                    currentHour--;
                 }
+                
+                // write all items still in RssItems to file
+                string newHeadlines = JsonConvert.SerializeObject(rssFeed.RssItems);
+                File.WriteAllText("feed/" + filename, newHeadlines);
 
 
-            } else {
+            }
+            else {
                 // New day so write all headlines to file
                 Console.WriteLine("Hour is 00 ...... Resetting Headlines!");
                 string AllHeadlines = JsonConvert.SerializeObject(rssFeed.RssItems);
