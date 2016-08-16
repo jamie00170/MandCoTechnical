@@ -12,7 +12,12 @@ namespace MandCoTechnical
     {
 
         // Used to store the items read from the rss feed
-        public static Collection<RssItem> rssItems = new Collection<RssItem>();
+        private static Collection<RssItem> rssItems = new Collection<RssItem>();
+
+        public Collection<RssItem> RssItems
+        {
+            get { return this.RssItems; }
+        }
 
         public void ParseDocElements(XmlNode parent, string xPath, ref string property)
         {

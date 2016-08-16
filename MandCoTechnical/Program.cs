@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Web.Script.Serialization;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace MandCoTechnical
 {
@@ -76,12 +78,15 @@ namespace MandCoTechnical
 
 
             } else {
-                // New day so Read in all headlines
+                // New day so write all headlines to file
+                Console.WriteLine("Hour is 00 ...... Resetting Headlines!");
+                string AllHeadlines = JsonConvert.SerializeObject(rssFeed.RssItems);
+                File.WriteAllText("feed/" + filename, AllHeadlines);
 
 
             }
 
 
-            }
+        }
         }
 }
