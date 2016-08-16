@@ -43,6 +43,21 @@ namespace MandCoTechnical
             Int32.TryParse(dateNow, out currentHour);
 
             return currentHour;
+        }
+
+        /// <summary>
+        /// Returns the filename for the an hour given the current hour and current filename 
+        /// </summary>
+        /// <param name="currentFilename"></param>
+        /// <param name="currentHour"></param>
+        /// <returns></returns>
+        private static string getFilenameForHour(String currentFilename, String currentHour)
+        {
+            StringBuilder sb = new StringBuilder(currentFilename);
+            sb[11] = currentHour[0];
+            sb[12] = currentHour[1];
+
+            return sb.ToString(); ;
 
         }
 
@@ -72,6 +87,9 @@ namespace MandCoTechnical
                 currentHour--; // don't look at file for current hour 
                 while (currentHour >= 0)
                 {
+                    // get the previous hours file
+                    string strHour = currentHour.ToString("D2");
+                    string currentFilename = getFilenameForHour(filename, strHour);
 
                     currentHour--;
                 }
