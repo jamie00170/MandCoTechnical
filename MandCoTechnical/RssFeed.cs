@@ -32,6 +32,7 @@ namespace MandCoTechnical
             get { return this.description; }
             set { this.description = value; }
         }
+
         public Collection<RssItem> Items
         {
             get { return this.items; }
@@ -81,7 +82,7 @@ namespace MandCoTechnical
 
         }
 
-        private void removeDuplicateHeadlines(Collection<RssItem> previousRssItems)
+        public void removeDuplicateHeadlines(Collection<RssItem> previousRssItems)
         {
 
             RssFeed rssFeed = new RssFeed();

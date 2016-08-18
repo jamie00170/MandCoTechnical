@@ -12,16 +12,14 @@ using System.Collections.ObjectModel;
 namespace MandCoTechnical
 {
 
-    class Program
-    {
-
-        public static Collection<RssItem> newItems = new Collection<RssItem>();
+    public class Program
+    {       
 
         /// <summary>
         /// Returns the intended filename given the current date/time
         /// </summary>
         /// <returns></returns>
-        private static string getCurrentfilename()
+        public static string getCurrentFilename()
         {
             // get current date time
             string dateNow = DateTime.Now.ToString("yyyyMMddHH");
@@ -32,8 +30,7 @@ namespace MandCoTechnical
             string hour = dateNow.Substring(8, 2);
 
             // Create the filename with the current date time information
-            string filename = year + "-" + month + "-" + day + "-" + hour + ".json";
-            Console.WriteLine("filename: " + filename);
+            string filename = year + "-" + month + "-" + day + "-" + hour + ".json";           
             return filename;
         }
 
@@ -41,7 +38,7 @@ namespace MandCoTechnical
         /// Returns an int version of the current hour
         /// </summary>
         /// <returns></returns>
-        private static int getCurrentHourInt()
+        public static int getCurrentHourInt()
         {
             string dateNow = DateTime.Now.ToString("HH");
             int currentHour = 0;
@@ -56,7 +53,7 @@ namespace MandCoTechnical
         /// <param name="currentFilename"></param>
         /// <param name="currentHour"></param>
         /// <returns></returns>
-        private static string getFilenameForHour(String currentFilename, String currentHour)
+        public static string getFilenameForHour(String currentFilename, String currentHour)
         {
             StringBuilder sb = new StringBuilder(currentFilename);
             sb[11] = currentHour[0];
@@ -65,105 +62,73 @@ namespace MandCoTechnical
             return sb.ToString(); ;
 
         }
-
-        private static Collection<RssItem> removeDuplicateHeadlines(Collection<RssItem> previousRssItems)
-        {
-
-            RssFeed rssFeed = new RssFeed();
-
-
-            Collection<RssItem> items_to_remove = new Collection<RssItem>();
-            foreach (RssItem item in previousRssItems)
-            {
-                // if item.title is already a title in rssItems remove from new RssItems
-                foreach (RssItem new_item in rssFeed.rssItems)
-                {
-                    if (new_item.title.Equals(item.title))
-                    {
-                             
-                        items_to_remove.Add(new_item);
-                    }
-                }
-            }
-            foreach (RssItem item in items_to_remove)
-            {
-                
-                rssFeed.rssItems.Remove(item);
-            }         
-
-            return newItems = rssFeed.rssItems;
-
-        }
-
+      
 
         static void Main(string[] args)
         {
-            // Create a new XML Reader
-            XmlTextReader rssReader = new XmlTextReader("http://feeds.bbci.co.uk/news/uk/rss.xml");
+            XmlTextReader rssReader;
+            XmlDocument rssDoc;
 
-            XmlDocument rssDoc = new XmlDocument();
+            rssReader = new XmlTextReader("http://feeds.bbci.co.uk/news/uk/rss.xml");
+
+            rssDoc = new XmlDocument();
             rssDoc.Load(rssReader);
 
+
             RssFeed rssFeed = new RssFeed();
+
             rssFeed.ParseRssItems(rssDoc);
 
+            //displayRssItems();       
 
-            // calculate the current filename
-            String filename = getCurrentfilename();
+            string filename = getCurrentFilename();
 
-            JavaScriptSerializer ser = new JavaScriptSerializer();          
-            
+            JavaScriptSerializer ser = new JavaScriptSerializer();
 
             // if Hour != 00
             if (filename.Substring(11, 2) != "00")
             {
-                // Check all files that already exist for that day
+
                 int currentHour = getCurrentHourInt();
                 currentHour--; // don't look at file for current hour 
                 while (currentHour >= 0)
                 {
-                    // get the previous hours file
                     string strHour = currentHour.ToString("D2");
-                    string currentFilename = getFilenameForHour(filename, strHour);
-                    
-                    // if a file exists for current hour
-                    if (File.Exists("feed/" + currentFilename))
+                    string previousFilename = getFilenameForHour(filename, strHour);
+                    if (File.Exists("feed/" + previousFilename))
                     {
-                        // Store the items in the file in currentRssItems
-                        Console.WriteLine("Previous file name :" + currentFilename);
-                        string newJsonSTRING = File.ReadAllText("feed/" + currentFilename);
-                        Collection<RssItem> currentRssItems = JsonConvert.DeserializeObject<Collection<RssItem>>(newJsonSTRING);
+                        Console.WriteLine("Previous file name :" + previousFilename);
+                        string newJsonSTRING = File.ReadAllText("feed/" + previousFilename);
+                        RssFeed previousRssFeed = JsonConvert.DeserializeObject<RssFeed>(newJsonSTRING);
 
                         // Remove headlines already stored from new rss items
-                        newItems = removeDuplicateHeadlines(currentRssItems);
-                       
+                        rssFeed.removeDuplicateHeadlines(previousRssFeed.Items);
                     }
-                    else {
-                        Console.WriteLine("Warning file does not exist for: " + currentFilename.Substring(0, 13));
-
+                    else
+                    {
+                        Console.WriteLine("No file for: " + previousFilename.Substring(0, 13) + " exists!");
                     }
-                    // Move onto the previous file
                     currentHour--;
                 }
 
-                
-
-                // write all items still in RssItems to file
-                string newHeadlines = JsonConvert.SerializeObject(newItems);
+                // write all items still in newRssItems to file
+                string newHeadlines = JsonConvert.SerializeObject(rssFeed);
                 File.WriteAllText("feed/" + filename, newHeadlines);
 
-
             }
-            else {
-                // New day so write all headlines to file
+            else
+            {
+                // Store all headlines since it is a new day 
                 Console.WriteLine("Hour is 00 ...... Resetting Headlines!");
-                string AllHeadlines = JsonConvert.SerializeObject(rssFeed.rssItems);
+                string AllHeadlines = JsonConvert.SerializeObject(rssFeed);
                 File.WriteAllText("feed/" + filename, AllHeadlines);
 
-
             }
 
+        }
 
-        }
-        }
+
+
+    }
 }
+

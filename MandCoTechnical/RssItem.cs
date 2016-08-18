@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace MandCoTechnical
 {
     class RssItem
-    {
-        public DateTime date;
+    {     
         public string title;
         public string description;
         public string link;
+        public string date;
 
     }
 }
