@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 
 namespace MandCoTechnical
 {
-    class RssFeed
+    public class RssFeed
     {
 
         private string title;
@@ -39,7 +39,8 @@ namespace MandCoTechnical
             set { this.items = value; }
         }
 
-        public void ParseDocElements(XmlNode parent, string xPath, ref string property)
+        
+        private void ParseDocElements(XmlNode parent, string xPath, ref string property)
         {
             // Select the node correspinding to xPath
             XmlNode node = parent.SelectSingleNode(xPath);
@@ -51,6 +52,10 @@ namespace MandCoTechnical
                 property = "Unresolvable";
         }
 
+        /// <summary>
+        /// Parses an rss document and extracts the title, link, description and items and stores them in an RssFeed object
+        /// </summary>
+        /// <param name="xmlDoc">Contains an xml document extracted from an rss feed</param>
         public void ParseRssItems(XmlDocument xmlDoc)
         {
             items.Clear();
@@ -82,12 +87,17 @@ namespace MandCoTechnical
 
         }
 
+        /// <summary>
+        /// Used to remove items already stored in a previous file
+        /// </summary>
+        /// <param name="previousRssItems">Contains a collection of RssItems from a file that was generated previously during the day</param>
         public void removeDuplicateHeadlines(Collection<RssItem> previousRssItems)
         {
 
             RssFeed rssFeed = new RssFeed();
 
             Collection<RssItem> items_to_remove = new Collection<RssItem>();
+            // For each item in the previous files items 
             foreach (RssItem item in previousRssItems)
             {
                 // if item.title is already a title in rssItems remove from new RssItems
@@ -101,7 +111,6 @@ namespace MandCoTechnical
             }
             foreach (RssItem item in items_to_remove)
             {
-
                 items.Remove(item);
             }          
         }        

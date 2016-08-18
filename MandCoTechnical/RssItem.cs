@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MandCoTechnical
 {
-    class RssItem
+    public class RssItem
     {     
         public string title;
         public string description;
