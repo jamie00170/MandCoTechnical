@@ -12,8 +12,6 @@ using System.Collections.ObjectModel;
 namespace MandCoTechnical
 {
 
-
-
     class Program
     {
 
@@ -82,14 +80,14 @@ namespace MandCoTechnical
                 {
                     if (new_item.title.Equals(item.title))
                     {
-                        //Console.WriteLine("Two titles equal: " + new_item.title + " and " + item.title);       
+                             
                         items_to_remove.Add(new_item);
                     }
                 }
             }
             foreach (RssItem item in items_to_remove)
             {
-                Console.WriteLine("Removing item: " + item.title);
+                
                 rssFeed.rssItems.Remove(item);
             }         
 
