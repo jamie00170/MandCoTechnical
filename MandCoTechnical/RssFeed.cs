@@ -59,7 +59,6 @@ namespace MandCoTechnical
 
         }
 
-
         private void removeDuplicateHeadlines(Collection<RssItem> previousRssItems)
         {
 
@@ -84,23 +83,7 @@ namespace MandCoTechnical
                 items.Remove(item);
             }          
 
-        }
-
-
-        /// <summary>
-        /// Used for debugging - checks that rss feed has been added to rss items
-        /// </summary>
-        public void displayRssItems()
-        {
-            foreach (RssItem item in items)
-            {
-                Console.WriteLine(Environment.NewLine + "Title: " + item.title);
-                Console.WriteLine("Description: " + item.description);
-                Console.WriteLine("Date: " + item.date);
-                Console.WriteLine("Link: " + item.link);
-            }
-        }
-
+        }        
 
     }
 }
