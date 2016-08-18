@@ -31,6 +31,15 @@ namespace MandCoTechnical
         public void ParseRssItems(XmlDocument xmlDoc)
         {
             items.Clear();
+
+            XmlNode title = xmlDoc.SelectSingleNode("rss/channel/title");
+            XmlNode link = xmlDoc.SelectSingleNode("rss/channel/link");
+            XmlNode description = xmlDoc.SelectSingleNode("rss/channel/description");
+
+            this.title = title.InnerText;
+            this.link = link.InnerText;
+            this.description = description.InnerText;
+
             // select all items from xmlDoc
             XmlNodeList nodes = xmlDoc.SelectNodes("rss/channel/item");
             // for each item in the document 
@@ -38,17 +47,16 @@ namespace MandCoTechnical
             {
                 // Create an Rssitem 
                 RssItem item = new RssItem();
+
                 ParseDocElements(node, "title", ref item.title);
                 ParseDocElements(node, "description", ref item.description);
                 ParseDocElements(node, "link", ref item.link);
+                ParseDocElements(node, "pubDate", ref item.date);
 
-                string date = null;
-                ParseDocElements(node, "pubDate", ref date);
-                DateTime.TryParse(date, out item.date);
-
-                // Add the created item to rssItems
+                // Add the created item to Items
                 items.Add(item);
             }
+
         }
 
 
