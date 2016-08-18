@@ -16,6 +16,28 @@ namespace MandCoTechnical
         private string description;
         private Collection<RssItem> items = new Collection<RssItem>();
 
+        public string Title
+        {
+            get { return this.title; }
+            set { this.title = value; }
+        }
+
+        public string Link
+        {
+            get { return this.link; }
+            set { this.link = value; }
+        }
+        public string Description
+        {
+            get { return this.description; }
+            set { this.description = value; }
+        }
+        public Collection<RssItem> Items
+        {
+            get { return this.items; }
+            set { this.items = value; }
+        }
+
         public void ParseDocElements(XmlNode parent, string xPath, ref string property)
         {
             // Select the node correspinding to xPath
@@ -72,7 +94,6 @@ namespace MandCoTechnical
                 {
                     if (new_item.title.Equals(item.title))
                     {
-
                         items_to_remove.Add(new_item);
                     }
                 }
@@ -82,7 +103,6 @@ namespace MandCoTechnical
 
                 items.Remove(item);
             }          
-
         }        
 
     }
